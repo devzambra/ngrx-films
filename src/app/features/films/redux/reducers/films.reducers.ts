@@ -7,8 +7,16 @@ export interface FilmState {
   loading: boolean;
 }
 
+function getInitialState() {
+  if (localStorage.getItem('films')) {
+    return JSON.parse(localStorage.getItem('films'));
+  } else {
+    return {};
+  }
+}
+
 export const initialState: FilmState = {
-  entities: {},
+  entities: getInitialState(),
   loaded: false,
   loading: false
 };
@@ -33,6 +41,7 @@ export function reducer(
     }
     case fromFilm.LOAD_FILMS_SUCCESS: {
       const films = action.payload;
+
       const entities = films.reduce((entities: { [id: number]: Film }, film: Film) => {
         return {
           ...entities,
@@ -41,6 +50,9 @@ export function reducer(
       }, {
         ...state.entities
       });
+
+      localStorage.setItem('films', JSON.stringify(entities));
+
       return {
         ...state,
         loading: false,
