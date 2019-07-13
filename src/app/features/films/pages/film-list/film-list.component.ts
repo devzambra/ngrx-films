@@ -5,7 +5,7 @@ import { Film } from '../../models/Film.model';
   selector: 'app-film-list',
   template: `
     <ul *ngFor="let film of films">
-      <li>{{film.title}}</li>
+      <li [routerLink]="['/films', film.id]">{{film.title}}</li>
     </ul>
   `,
   styleUrls: ['./film-list.component.scss'],

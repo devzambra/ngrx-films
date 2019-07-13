@@ -2,20 +2,13 @@ import { Film } from '../../models/Film.model';
 import * as fromFilm from '../actions/films.actions';
 
 export interface FilmState {
-  data: Film[];
+  entities: {[id: number]: Film};
   loaded: boolean;
   loading: boolean;
 }
 
 export const initialState: FilmState = {
-  data: [{
-    id: 1,
-    title: 'test film',
-    synopsis: 'test',
-    year: 2019,
-    rating: 9.9,
-    poster: 'test'
-  }],
+  entities: {},
   loaded: false,
   loading: false
 };
@@ -39,10 +32,20 @@ export function reducer(
       };
     }
     case fromFilm.LOAD_FILMS_SUCCESS: {
+      const films = action.payload;
+      const entities = films.reduce((entities: { [id: number]: Film }, film: Film) => {
+        return {
+          ...entities,
+          [film.id]: film
+        };
+      }, {
+        ...state.entities
+      });
       return {
         ...state,
         loading: false,
-        loaded: true
+        loaded: true,
+        entities
       };
     }
   }
@@ -50,6 +53,6 @@ export function reducer(
   return state;
 }
 
+export const getFilmsEntities = (state: FilmState) => state.entities;
 export const getFilmsLoading = (state: FilmState) => state.loading;
 export const getFilmsLoaded = (state: FilmState) => state.loaded;
-export const getFilms = (state: FilmState) => state.data;
